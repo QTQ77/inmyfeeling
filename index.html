@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>文字胶囊</title>
+<style>
+  body {
+    background: #f4efe6;
+    color: #2b2b2b;
+    font-family: "Songti SC", "SimSun", serif;
+    max-width: 560px;
+    margin: 60px auto;
+    padding: 0 20px;
+    line-height: 1.8;
+  }
+  h1 { font-size: 48px; letter-spacing: 2px; }
+  button {
+   background: #2b2b2b;
+    color: #e8dfd0;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-right: 8px;
+  }
+  button:hover { background: #4a4a4a; }
+  p { font-size: 18px; }
+</style>
+</head>
+<body>
+<h1>文字胶囊</h1>
+<button id="button1">抽取胶囊</button>
+<p id="results">你抽取到的是…</p>
+<button id="saveBtn">保存这颗胶囊</button>
+<p id="saved">空空如也</p>
+<script>
+const weather=["阴天","小雨","多云","阵雨","晴天","闷热","潮湿","回南天","微风","暴雨","台风","骤雨","湿冷","干燥","薄雾"];
+const mood=["狂喜","痛苦","平静","不甘","克制","苦涩","嫉妒","疏离","麻木","疲惫","明亮","轻快"];
+const scenes=["出租屋","公交站","花园","厨房客厅","机场","楼梯拐角","电梯","旧书店","天台","浴室","天桥底","步行街","稻田","雪地","婚礼"];
+const btn =document.getElementById("button1");
+const result = document.getElementById("results");
+
+btn.addEventListener("click", () => {
+  const w=weather[Math.floor(Math.random()*weather.length)];
+  const m=mood[Math.floor(Math.random()*mood.length)];
+  const s=scenes[Math.floor(Math.random()*scenes.length)];
+  result.textContent=w+"·"+m+"·"+s;});
+const saveBtn = document.getElementById("saveBtn");
+const saved = document.getElementById("saved");
+
+const last = localStorage.getItem("lastCapsule");
+if (last) {
+  saved.textContent = "上次保存：" + last;
+}
+
+saveBtn.addEventListener("click", () => {
+  const text = result.textContent;
+  localStorage.setItem("lastCapsule", text);
+  saved.textContent = "已保存：" + text;
+});
+</script>
+</body>
+</html>
