@@ -26,7 +26,15 @@
     margin-right: 8px;
   }
   button:hover { background: #4a4a4a; }
-  p { font-size: 18px; }
+  #results{
+  font-size:18px;
+  min-height:35px;
+}
+#historyList{
+  font-size:16px;
+  padding-left:20px;
+  color:#5c5044;
+}
 </style>
 </head>
 <body>
@@ -34,26 +42,72 @@
 <button id="button1">抽取胶囊</button>
 <p id="results">你抽取到的是…</p>
 <button id="saveBtn">保存这颗胶囊</button>
-<p id="saved">空空如也</p>
+<p id="msg" style="color:#b5653c;font-size: 14px; height:20px;"></p>
+<h3>最近的胶囊:</h3>
+<ul id="historyList">
 <script>
 const weather=["阴天","小雨","多云","阵雨","晴天","闷热","潮湿","回南天","微风","暴雨","台风","骤雨","湿冷","干燥","薄雾"];
 const mood=["狂喜","痛苦","平静","不甘","克制","苦涩","嫉妒","疏离","麻木","疲惫","明亮","轻快"];
-const scenes=["出租屋","公交站","花园","厨房客厅","机场","楼梯拐角","电梯","旧书店","天台","浴室","天桥底","步行街","稻田","雪地","婚礼"];
+const scenes=["出租屋","公交站","花园","厨房","客厅","机场","楼梯拐角","电梯","旧书店","天台","浴室","天桥底","步行街","稻田","雪地","婚礼"];
 const btn =document.getElementById("button1");
 const result = document.getElementById("results");
 
 btn.addEventListener("click", () => {
-  const w=weather[Math.floor(Math.random()*weather.length)];
-  const m=mood[Math.floor(Math.random()*mood.length)];
-  const s=scenes[Math.floor(Math.random()*scenes.length)];
-  result.textContent=w+"·"+m+"·"+s;});
-const saveBtn = document.getElementById("saveBtn");
-const saved = document.getElementById("saved");
+  const w = weather[Math.floor(Math.random() * weather.length)];
+  const m = mood[Math.floor(Math.random() * mood.length)];
+  const s = scenes[Math.floor(Math.random() * scenes.length)];
 
-const last = localStorage.getItem("lastCapsule");
-if (last) {
-  saved.textContent = "上次保存：" + last;
+  const fullText = w + "·" + m + "·" + s;
+  result.textContent = "";
+
+  let index = 0;
+  const timer = setInterval(() => {
+    result.textContent += fullText[index];
+    index++;
+    if (index >= fullText.length) {
+      clearInterval(timer);
+    }
+  }, 170);
+});
+const historyList = document.getElementById("historyList");
+const saveBtn = document.getElementById("saveBtn");
+
+function showHistory() {
+  let history = JSON.parse(localStorage.getItem("myHistory")) || [];
+  historyList.innerHTML = ""; 
+
+  for (let i = 0; i < history.length; i++) {
+    const li = document.createElement("li");
+    li.textContent = history[i];
+    historyList.appendChild(li);
+  }
 }
+
+showHistory();
+
+const msg=document.getElementById("msg")
+
+saveBtn.addEventListener("click", () => {
+  const text = result.textContent; 
+  if (text === "" || text === "你抽取到的是…") return; 
+
+  let history = JSON.parse(localStorage.getItem("myHistory")) || [];
+  if (history.includes(text)){
+    msg.textContent="这颗胶囊已经存过啦！";
+setTimeout(()=>{msg.textContent="";},1500);
+    return;
+}
+  history.unshift(text); 
+
+  if (history.length > 10) {
+    history.pop(); 
+  }
+
+  localStorage.setItem("myHistory", JSON.stringify(history));
+  showHistory();
+msg.textContent="保存成功！";
+setTimeout(()=>{msg.textContent="";},1000);
+});
 
 saveBtn.addEventListener("click", () => {
   const text = result.textContent;
